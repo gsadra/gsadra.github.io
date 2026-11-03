@@ -1,0 +1,282 @@
+---
+import PageLayout from '../layouts/PageLayout.astro';
+import SocialLinks from '../components/SocialLinks.astro';
+import {
+  certifications,
+  education,
+  experience,
+  skills,
+} from '../data/about';
+import { profile } from '../data/profile';
+import { currentResearch } from '../data/research';
+
+const description =
+  'About Sadra Gholami: background, research interests, technical skills, and contact details.';
+---
+
+<PageLayout
+  title="About | Sadra Gholami"
+  description={description}
+  heading="About"
+  lede="A short account of my background, what I am working on, and the tools I use."
+>
+  <div class="stack">
+    <section class="block" aria-labelledby="biography">
+      <h2 id="biography">Biography</h2>
+      <div class="prose">
+        <p>
+          I am a B.Sc. Industrial Engineering student with a strong interest in data-driven decision-making,
+          optimization, and intelligent systems. 
+          My academic background and personal projects have led me to focus on data analysis,
+          mathematical modeling, and machine learning as tools for solving complex real-world problems
+        </p>
+        <p>
+          I have hands-on experience and self-driven projects in data analytics,
+          algorithms, optimization modeling, and machine learning,
+          working with structured data and analytical models to support better decisions and system-level improvements.
+        </p>
+        <p>
+          From a technical perspective, I am proficient in Python and C++,
+          and I have worked with a range of tools and frameworks, including MS Excel,
+          SQL, GAMS, OPL, and optimization and analytics libraries such as NumPy, Pandas,
+          SciPy, Scikit-Learn, Pyomo, OR-Tools, SymPy, and TensorFlow.
+          I am comfortable developing analytical pipelines, building optimization models,
+          and experimenting with machine learning algorithms.
+        </p>
+        <p>
+          Currently, alongside my academic studies, I am actively involved in research areas such as robust optimization,
+          energy optimization, cloud resource management, and machine/deep learning.
+          I continuously seek to deepen my understanding of AI-driven methods and their integration with optimization
+          and decision-making frameworks, with the goal of applying these techniques to impactful industrial and
+          research problems.
+        </p>
+      </div>
+    </section>
+
+    {
+      education.length > 0 && (
+        <section class="block" aria-labelledby="education">
+          <h2 id="education">Education</h2>
+          <dl class="timeline">
+            {education.map((entry) => (
+              <div class="timeline__item">
+                <dt class="timeline__role">
+                  {entry.qualification}, {entry.field}
+                </dt>
+                <dd class="timeline__body">
+                  <p class="timeline__org">{entry.institution}</p>
+                  <p class="timeline__period">{entry.period}</p>
+                  {entry.detail && <p class="timeline__detail">{entry.detail}</p>}
+                </dd>
+              </div>
+            ))}
+          </dl>
+        </section>
+      )
+    }
+
+    {
+      experience.length > 0 && (
+        <section class="block" aria-labelledby="experience">
+          <h2 id="experience">Professional experience</h2>
+          <dl class="timeline">
+            {experience.map((entry) => (
+              <div class="timeline__item">
+                <dt class="timeline__role">{entry.role}</dt>
+                <dd class="timeline__body">
+                  <p class="timeline__org">{entry.organisation}</p>
+                  <p class="timeline__period">{entry.period}</p>
+                  <p class="timeline__detail">{entry.description}</p>
+                </dd>
+              </div>
+            ))}
+          </dl>
+        </section>
+      )
+    }
+
+    <section class="block" aria-labelledby="skills">
+      <h2 id="skills">Technical skills</h2>
+      <dl class="skills">
+        {
+          skills.map((group) => (
+            <div class="skills__group">
+              <dt>{group.label}</dt>
+              <dd>{group.items.join(' · ')}</dd>
+            </div>
+          ))
+        }
+      </dl>
+    </section>
+
+    {
+      certifications.length > 0 && (
+        <section class="block" aria-labelledby="certifications">
+          <h2 id="certifications">Certifications</h2>
+          <ul class="plain-list">
+            {certifications.map((item) => (
+              <li>{item}</li>
+            ))}
+          </ul>
+        </section>
+      )
+    }
+
+    <section class="block" aria-labelledby="contact">
+      <h2 id="contact">Contact</h2>
+      <p class="contact__text">
+        {profile.email
+          ? 'The most reliable way to reach me is through GitHub or the email address below.'
+          : 'The most reliable way to reach me is through GitHub.'}
+        My CV and project pages are linked here as well.
+      </p>
+      <SocialLinks />
+    </section>
+  </div>
+</PageLayout>
+
+<style>
+  .stack {
+    display: grid;
+    gap: clamp(2rem, 1.6rem + 1.6vw, 2.75rem);
+    padding-bottom: 4rem;
+  }
+
+  .block h2 {
+    font-size: var(--fs-xl);
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 1.25rem;
+  }
+
+  .timeline {
+    margin: 0;
+    display: grid;
+    gap: 1.25rem;
+  }
+
+  .timeline__item {
+    display: grid;
+    grid-template-columns: 12rem 1fr;
+    gap: 0.35rem 1.5rem;
+  }
+
+  .timeline__role {
+    font-size: var(--fs-sm);
+    font-weight: 500;
+    color: var(--text);
+    line-height: 1.5;
+  }
+
+  .timeline__body {
+    margin: 0;
+  }
+
+  .timeline__org {
+    font-size: var(--fs-sm);
+    color: var(--text);
+  }
+
+  .timeline__period {
+    font-size: var(--fs-xs);
+    color: var(--muted);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .timeline__detail {
+    margin-top: 0.35rem;
+    font-size: var(--fs-sm);
+    color: var(--muted);
+    line-height: 1.65;
+  }
+
+  .research-item__head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 0.4rem 1rem;
+  }
+
+  .research-item__head h3 {
+    font-size: var(--fs-md);
+  }
+
+  .research-item__text {
+    margin-top: 0.55rem;
+    max-width: 64ch;
+    font-size: var(--fs-sm);
+    line-height: 1.7;
+    color: var(--muted);
+  }
+
+  .inline-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    margin-top: 0.75rem;
+    font-size: var(--fs-sm);
+    font-weight: 500;
+    text-decoration: none;
+  }
+
+  .inline-link:hover {
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
+  }
+
+  .skills {
+    margin: 0;
+    display: grid;
+    gap: 0.9rem;
+  }
+
+  .skills__group {
+    display: grid;
+    grid-template-columns: 9.5rem 1fr;
+    gap: 1rem;
+    padding-bottom: 0.9rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .skills__group:last-child {
+    border-bottom: 0;
+    padding-bottom: 0;
+  }
+
+  .skills dt {
+    font-size: var(--fs-sm);
+    font-weight: 500;
+    color: var(--text);
+  }
+
+  .skills dd {
+    margin: 0;
+    font-size: var(--fs-sm);
+    color: var(--muted);
+  }
+
+  .contact__text {
+    max-width: 60ch;
+    margin-bottom: 1.15rem;
+    font-size: var(--fs-sm);
+    line-height: 1.7;
+    color: var(--muted);
+  }
+
+  .plain-list {
+    padding-left: 1.4rem;
+    margin: 0;
+    font-size: var(--fs-sm);
+    line-height: 1.7;
+    color: var(--muted);
+  }
+
+  @media (max-width: 560px) {
+    .timeline__item,
+    .skills__group {
+      grid-template-columns: 1fr;
+      gap: 0.2rem;
+    }
+  }
+</style>

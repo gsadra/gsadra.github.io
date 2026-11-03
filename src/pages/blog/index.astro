@@ -1,0 +1,83 @@
+---
+import { getCollection } from 'astro:content';
+import PageLayout from '../../layouts/PageLayout.astro';
+import BlogPostList from '../../components/BlogPostList.astro';
+import { sortPosts } from '../../data/blog';
+
+const posts = sortPosts(await getCollection('blog'));
+
+const description =
+  'Notes and ideas by Sadra Gholami on machine learning, operations research, and building things with data.';
+---
+
+<PageLayout
+  title="Blog | Sadra Gholami"
+  description={description}
+  heading="Blog"
+  lede="Working notes on machine learning, operations research, and the parts of a project that usually go unrecorded."
+>
+  {
+    posts.length > 0 ? (
+      <>
+        <div class="blog-tools">
+          <a href="/blog/tags/">Browse by tag</a>
+          <span class="blog-tools__sep" aria-hidden="true">·</span>
+          <a href="/blog/rss.xml">RSS feed</a>
+        </div>
+        <BlogPostList posts={posts} />
+      </>
+    ) : (
+      <div class="empty">
+        <p class="empty__title">Nothing published yet.</p>
+        <p class="empty__text">
+          Notes and short write-ups will appear here as they are finished. In the
+          meantime, the <a href="/projects/">project pages</a> document the work in
+          more detail.
+        </p>
+      </div>
+    )
+  }
+</PageLayout>
+
+<style>
+  .blog-tools {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.45rem;
+    margin-bottom: 1rem;
+    font-size: var(--fs-xs);
+  }
+
+  .blog-tools a {
+    color: var(--muted);
+    text-decoration: none;
+  }
+
+  .blog-tools a:hover {
+    color: var(--accent);
+  }
+
+  .blog-tools__sep {
+    color: var(--border-strong);
+  }
+
+  .empty {
+    border-top: 1px solid var(--border);
+    padding-block: 1.75rem 4rem;
+    max-width: 58ch;
+  }
+
+  .empty__title {
+    font-family: var(--font-serif);
+    font-size: var(--fs-lg);
+    font-weight: 600;
+  }
+
+  .empty__text {
+    margin-top: 0.65rem;
+    font-size: var(--fs-sm);
+    line-height: 1.7;
+    color: var(--muted);
+  }
+</style>

@@ -1,0 +1,71 @@
+---
+import { existsSync } from 'node:fs';
+import { join } from 'node:path';
+
+import PageLayout from '../layouts/PageLayout.astro';
+import Icon from '../components/Icon.astro';
+import { siteMeta } from '../data/profile';
+
+const cvFile = 'public/files/sadra-gholami-cv.pdf';
+const hasPdf = existsSync(join(process.cwd(), cvFile));
+
+const description = 'Download the curriculum vitae of Sadra Gholami as a PDF.';
+---
+
+<PageLayout
+  title="CV | Sadra Gholami"
+  description={description}
+  heading="Curriculum Vitae"
+  lede={`The complete document, available as a PDF. Last updated ${siteMeta.lastUpdated}.`}
+>
+  <div class="cv-download">
+    {
+      hasPdf ? (
+        <a class="button" href="/files/sadra-gholami-cv.pdf" download>
+          Download PDF
+          <Icon name="cv" size={15} />
+        </a>
+      ) : (
+        <p class="cv-missing">
+          The PDF is not available yet. Please check back shortly.
+        </p>
+      )
+    }
+  </div>
+</PageLayout>
+
+<style>
+  .cv-download {
+    padding-block: 0.5rem 5rem;
+    border-top: 1px solid var(--border);
+    padding-top: 2rem;
+  }
+
+  .button {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    padding: 0.6rem 1.05rem;
+    border-radius: var(--radius-sm);
+    background-color: var(--accent);
+    border: 1px solid var(--accent);
+    color: #ffffff;
+    font-size: var(--fs-sm);
+    font-weight: 500;
+    text-decoration: none;
+    transition:
+      background-color var(--duration) var(--ease),
+      border-color var(--duration) var(--ease);
+  }
+
+  .button:hover {
+    background-color: var(--accent-hover);
+    border-color: var(--accent-hover);
+    color: #ffffff;
+  }
+
+  .cv-missing {
+    font-size: var(--fs-sm);
+    color: var(--muted);
+  }
+</style>

@@ -1,0 +1,97 @@
+---
+import PageLayout from '../layouts/PageLayout.astro';
+import SocialLinks from '../components/SocialLinks.astro';
+import Icon from '../components/Icon.astro';
+import { profile, profileLinks } from '../data/profile';
+
+const description = `Contact Sadra Gholami by email${
+  profile.email ? ` at ${profile.email}` : ''
+}.`;
+
+const externalProfiles = profileLinks.filter((link) => link.href.startsWith('http'));
+---
+
+<PageLayout
+  title="Contact | Sadra Gholami"
+  description={description}
+  heading="Contact"
+  lede="The most reliable way to reach me is by email. I read everything, and I reply when I can."
+>
+  <div class="contact">
+    {
+      profile.email ? (
+        <div class="contact__card">
+          <p class="eyebrow">Email</p>
+          <a class="contact__email" href={`mailto:${profile.email}`}>
+            {profile.email}
+            <Icon name="arrow-up-right" size={17} />
+          </a>
+          <p class="contact__note">
+            For research questions, collaboration, or anything related to the work
+            on this site.
+          </p>
+        </div>
+      ) : (
+        <p class="contact__note">
+          A public email address is not available yet. Please use one of the
+          profiles below.
+        </p>
+      )
+    }
+
+    {
+      externalProfiles.length > 0 && (
+        <section class="contact__elsewhere" aria-labelledby="elsewhere">
+          <h2 id="elsewhere">Elsewhere</h2>
+          <SocialLinks links={externalProfiles} />
+        </section>
+      )
+    }
+  </div>
+</PageLayout>
+
+<style>
+  .contact {
+    display: grid;
+    gap: 2.5rem;
+    padding-bottom: 4.5rem;
+  }
+
+  .contact__card {
+    border-top: 1px solid var(--border);
+    padding-top: 1.75rem;
+  }
+
+  .contact__email {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    margin-top: 0.6rem;
+    font-family: var(--font-serif);
+    font-size: clamp(1.375rem, 1.2rem + 0.9vw, 1.75rem);
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    color: var(--text);
+    text-decoration: none;
+    overflow-wrap: anywhere;
+  }
+
+  .contact__email:hover {
+    color: var(--accent);
+  }
+
+  .contact__note {
+    margin-top: 0.85rem;
+    max-width: 54ch;
+    font-size: var(--fs-sm);
+    line-height: 1.7;
+    color: var(--muted);
+  }
+
+  .contact__elsewhere h2 {
+    font-size: var(--fs-lg);
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 1.1rem;
+  }
+</style>

@@ -1,0 +1,273 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Profile from '../components/Profile.astro';
+import SectionTitle from '../components/SectionTitle.astro';
+import ResearchInterests from '../components/ResearchInterests.astro';
+import ProjectCard from '../components/ProjectCard.astro';
+import NewsList from '../components/NewsList.astro';
+import Icon from '../components/Icon.astro';
+import { profile, sameAsProfiles, siteMeta } from '../data/profile';
+import { researchAreas } from '../data/research';
+
+const projects = await getCollection('projects');
+const selected = projects
+  .filter((project) => project.data.featured)
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
+  .slice(0, 3);
+
+const calendarHref =
+  profile.calendarUrl || 'https://calendar.google.com/calendar/u/0/r';
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Person',
+  name: profile.name,
+  url: 'https://gsadra.github.io/',
+  jobTitle: profile.title,
+  description: siteMeta.description,
+  knowsAbout: researchAreas.map((area) => area.name),
+  sameAs: sameAsProfiles,
+};
+---
+
+<BaseLayout title={siteMeta.title} description={siteMeta.description} jsonLd={jsonLd}>
+  <div class="container home">
+    <Profile />
+
+    <div class="home__content">
+      <div class="home__intro">
+        <h2 class="home__welcome">Welcome to Sadra's Home Page!</h2>
+        <p class="lede">{profile.bio[0]}</p>
+        <p class="home__intro-more">{profile.bio[1]}</p>
+      </div>
+
+      <section class="section" aria-labelledby="interests-title">
+        <SectionTitle
+          title="Research interests"
+          id="interests-title"
+          action={{ label: 'Research', href: '/research/' }}
+        />
+        <ResearchInterests />
+      </section>
+
+      <section class="section" aria-labelledby="schedule-title">
+        <SectionTitle title="My Schedule" id="schedule-title" />
+
+        <a
+          class="home-card"
+          href={calendarHref}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <span class="home-card__icon">
+            <Icon name="calendar" size={19} />
+          </span>
+          <span class="home-card__body">
+            <span class="home-card__title">Google Calendar</span>
+            <span class="home-card__text">
+              My upcoming commitments and availability, kept in Google Calendar.
+            </span>
+          </span>
+          <span class="home-card__action">
+            Open calendar
+            <Icon name="arrow-up-right" size={14} />
+          </span>
+        </a>
+
+        {
+          import.meta.env.DEV && !profile.calendarUrl && (
+            <p class="home__hint">
+              Opens the standard Google Calendar view. Add your public calendar
+              link as <code>calendarUrl</code> in <code>src/data/profile.ts</code>.
+            </p>
+          )
+        }
+      </section>
+
+      <section class="section" aria-labelledby="cv-title">
+        <SectionTitle title="My CV" id="cv-title" />
+
+        <a class="home-card" href="/cv/">
+          <span class="home-card__icon">
+            <Icon name="cv" size={19} />
+          </span>
+          <span class="home-card__body">
+            <span class="home-card__title">Curriculum Vitae</span>
+            <span class="home-card__text">
+              Education, research experience, and technical skills, in one document.
+            </span>
+          </span>
+          <span class="home-card__action">
+            Open CV
+            <Icon name="arrow-right" size={14} />
+          </span>
+        </a>
+      </section>
+
+      <section class="section" aria-labelledby="projects-title">
+        <SectionTitle
+          title="Selected projects"
+          id="projects-title"
+          action={{ label: 'All projects', href: '/projects/' }}
+        />
+        <div class="project-list">
+          {selected.map((project) => <ProjectCard project={project} />)}
+        </div>
+      </section>
+
+      <section class="section" aria-labelledby="news-title">
+        <SectionTitle title="Latest news" id="news-title" />
+        <NewsList />
+      </section>
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .home {
+    display: grid;
+    grid-template-columns: 220px minmax(0, 1fr);
+    align-items: start;
+    gap: clamp(2.5rem, 5vw, 4.5rem);
+    padding-block: clamp(2.5rem, 2rem + 2vw, 3.5rem) 0;
+  }
+
+  .home__content {
+    min-width: 0;
+    padding-bottom: 4rem;
+  }
+
+  .home__intro {
+    padding-bottom: clamp(2rem, 1.6rem + 1.4vw, 2.75rem);
+  }
+
+  .home__welcome {
+    margin-bottom: 1rem;
+    font-size: clamp(1.55rem, 1.35rem + 0.9vw, 1.95rem);
+    line-height: 1.2;
+    letter-spacing: -0.015em;
+  }
+
+  .home__intro-more {
+    margin-top: 0.9rem;
+    max-width: 66ch;
+    font-size: var(--fs-sm);
+    line-height: 1.75;
+    color: var(--muted);
+  }
+
+  .project-list {
+    max-width: 860px;
+  }
+
+  .home-card {
+    display: flex;
+    align-items: center;
+    gap: 0.95rem;
+    max-width: 620px;
+    padding: 1rem 1.15rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background-color: var(--surface);
+    color: var(--text);
+    text-decoration: none;
+    transition:
+      border-color var(--duration) var(--ease),
+      background-color var(--duration) var(--ease);
+  }
+
+  .home-card:hover {
+    color: var(--text);
+    border-color: var(--border-strong);
+    background-color: var(--accent-tint);
+  }
+
+  .home-card__icon {
+    display: grid;
+    place-items: center;
+    flex: none;
+    width: 2.5rem;
+    height: 2.5rem;
+    border: 1px solid var(--border);
+    border-radius: 50%;
+    background-color: var(--bg);
+    color: var(--accent);
+  }
+
+  .home-card__body {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+    min-width: 0;
+  }
+
+  .home-card__title {
+    font-size: var(--fs-sm);
+    font-weight: 600;
+  }
+
+  .home-card__text {
+    font-size: var(--fs-xs);
+    line-height: 1.5;
+    color: var(--muted);
+  }
+
+  .home-card__action {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    flex: none;
+    margin-left: auto;
+    font-size: var(--fs-xs);
+    font-weight: 500;
+    color: var(--accent);
+  }
+
+  .home-card__action :global(svg) {
+    transition: transform var(--duration) var(--ease);
+  }
+
+  .home-card:hover .home-card__action :global(svg) {
+    transform: translateX(2px);
+  }
+
+  .home__hint {
+    margin-top: 0.7rem;
+    font-size: var(--fs-2xs);
+    line-height: 1.5;
+    color: var(--muted);
+  }
+
+  .home__hint code {
+    font-family: var(--font-mono);
+    font-size: 0.95em;
+  }
+
+  @media (max-width: 900px) {
+    .home {
+      grid-template-columns: 1fr;
+      gap: 2rem;
+      padding-block: 2rem 0;
+    }
+
+    .home__content {
+      padding-bottom: 3.5rem;
+    }
+  }
+
+  @media (max-width: 560px) {
+    .home-card {
+      display: grid;
+      grid-template-columns: auto minmax(0, 1fr);
+      align-items: start;
+      column-gap: 0.95rem;
+      row-gap: 0.4rem;
+    }
+
+    .home-card__action {
+      grid-column: 2;
+      margin-left: 0;
+    }
+  }
+</style>

@@ -1,0 +1,92 @@
+---
+import type { BlogPost } from '../data/blog';
+import { tagHref } from '../data/blog';
+import { formatDate, isoDate, readingTime } from '../utils/dates';
+
+interface Props {
+  posts: BlogPost[];
+}
+
+const { posts } = Astro.props;
+---
+
+<ul class="post-list" role="list">
+  {
+    posts.map((post) => (
+      <li class="post">
+        <div class="post__meta">
+          <time datetime={isoDate(post.data.date)}>{formatDate(post.data.date)}</time>
+          <span class="meta__dot" aria-hidden="true" />
+          <span>{readingTime(post.body)} min read</span>
+        </div>
+
+        <h2 class="post__title">
+          <a href={`/blog/${post.id}/`}>{post.data.title}</a>
+        </h2>
+        <p class="post__desc">{post.data.description}</p>
+
+        {post.data.tags.length > 0 && (
+          <ul class="tag-list post__tags" role="list">
+            {post.data.tags.map((tag) => (
+              <li class="tag">
+                <a href={tagHref(tag)}>{tag}</a>
+              </li>
+            ))}
+          </ul>
+        )}
+      </li>
+    ))
+  }
+</ul>
+
+<style>
+  .post-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    border-top: 1px solid var(--border);
+  }
+
+  .post {
+    padding-block: 1.6rem 1.75rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .post__meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.45rem 0.7rem;
+    font-size: var(--fs-xs);
+    color: var(--muted);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .post__title {
+    margin-top: 0.55rem;
+    font-size: var(--fs-lg);
+    font-weight: 600;
+  }
+
+  .post__title a {
+    color: var(--text);
+    text-decoration: none;
+    transition: color var(--duration) var(--ease);
+  }
+
+  .post__title a:hover {
+    color: var(--accent);
+  }
+
+  .post__desc {
+    margin-top: 0.45rem;
+    max-width: 66ch;
+    font-size: var(--fs-sm);
+    line-height: 1.7;
+    color: var(--muted);
+  }
+
+  .post__tags {
+    margin-top: 0.85rem;
+  }
+</style>

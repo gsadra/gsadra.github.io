@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 640" width="520" height="640" role="img" aria-label="Monogram of Sadra Gholami">
+  <rect width="520" height="640" fill="#F8FAFC" />
+  <text
+    x="260"
+    y="332"
+    text-anchor="middle"
+    font-family="Georgia, 'Times New Roman', serif"
+    font-size="190"
+    letter-spacing="-8"
+    fill="#171717"
+  >SG</text>
+  <rect x="230" y="384" width="60" height="2" fill="#2563EB" />
+  <text
+    x="260"
+    y="434"
+    text-anchor="middle"
+    font-family="Inter, Helvetica, Arial, sans-serif"
+    font-size="13"
+    letter-spacing="4.5"
+    fill="#64748B"
+  >SADRA GHOLAMI</text>
+</svg>

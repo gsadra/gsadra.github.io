@@ -1,0 +1,170 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import Icon from './Icon.astro';
+import { formatYear, isoDate } from '../utils/dates';
+
+interface Props {
+  project: CollectionEntry<'projects'>;
+  /** Hide the category when cards are already grouped by category. */
+  showCategory?: boolean;
+}
+
+const { project, showCategory = true } = Astro.props;
+const { title, description, category, technologies, github, demo, status, date } = project.data;
+
+const href = `/projects/${project.id}/`;
+const statusClass =
+  status === 'In Progress'
+    ? 'status--in-progress'
+    : status === 'Completed'
+      ? 'status--completed'
+      : '';
+---
+
+<article class="project">
+  <div class="project__head">
+    <h3 class="project__title">
+      <a href={href}>{title}</a>
+    </h3>
+    <span class:list={['status', statusClass]}>{status}</span>
+  </div>
+
+  <p class="project__desc">{description}</p>
+
+  {
+    technologies.length > 0 && (
+      <ul class="tag-list project__tags" role="list">
+        {technologies.map((tech) => (
+          <li class="tag">{tech}</li>
+        ))}
+      </ul>
+    )
+  }
+
+  <div class="project__foot">
+    <p class="meta">
+      {showCategory && <span>{category}</span>}
+      {showCategory && <span class="meta__dot" aria-hidden="true"></span>}
+      <time datetime={isoDate(date)}>{formatYear(date)}</time>
+    </p>
+
+    <div class="project__links">
+      {
+        github && (
+          <a href={github} target="_blank" rel="noopener noreferrer">
+            Repository
+            <Icon name="arrow-up-right" size={13} />
+          </a>
+        )
+      }
+      {
+        demo && (
+          <a href={demo} target="_blank" rel="noopener noreferrer">
+            Demo
+            <Icon name="arrow-up-right" size={13} />
+          </a>
+        )
+      }
+      <a class="project__more" href={href}>
+        Details
+        <Icon name="arrow-right" size={13} />
+      </a>
+    </div>
+  </div>
+</article>
+
+<style>
+  .project {
+    border-top: 1px solid var(--border);
+    padding-block: 1.5rem 1.6rem;
+  }
+
+  .project:last-child {
+    padding-bottom: 0;
+  }
+
+  .project__head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 1rem 1.5rem;
+    flex-wrap: wrap;
+  }
+
+  .project__title {
+    font-size: var(--fs-md);
+    font-weight: 600;
+    letter-spacing: -0.005em;
+  }
+
+  .project__title a {
+    color: var(--text);
+    text-decoration: none;
+    transition: color var(--duration) var(--ease);
+  }
+
+  .project__title a:hover {
+    color: var(--accent);
+  }
+
+  .project__desc {
+    margin-top: 0.45rem;
+    max-width: 68ch;
+    color: var(--muted);
+    font-size: var(--fs-sm);
+    line-height: 1.65;
+  }
+
+  .project__tags {
+    margin-top: 0.8rem;
+  }
+
+  .project__foot {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.6rem 1.5rem;
+    margin-top: 0.95rem;
+  }
+
+  .project__links {
+    display: flex;
+    align-items: center;
+    gap: 1.15rem;
+    font-size: var(--fs-xs);
+  }
+
+  .project__links a {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    color: var(--muted);
+    text-decoration: none;
+    transition: color var(--duration) var(--ease);
+  }
+
+  .project__links a:hover {
+    color: var(--accent);
+  }
+
+  .project__links .project__more {
+    color: var(--accent);
+    font-weight: 500;
+  }
+
+  .project__more :global(svg) {
+    transition: transform var(--duration) var(--ease);
+  }
+
+  .project__more:hover :global(svg) {
+    transform: translateX(2px);
+  }
+
+  @media (max-width: 480px) {
+    .project__foot {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+  }
+</style>

@@ -1,0 +1,115 @@
+---
+import Icon from './Icon.astro';
+import { profileLinks, type ProfileLink } from '../data/profile';
+
+interface Props {
+  links?: ProfileLink[];
+  variant?: 'default' | 'compact' | 'stacked' | 'icons';
+  class?: string;
+}
+
+const { links = profileLinks, variant = 'default', class: className } = Astro.props;
+---
+
+<ul class:list={['social', `social--${variant}`, className]} role="list">
+  {
+    links.map((link) => {
+      const external = link.href.startsWith('http');
+      return (
+        <li>
+          <a
+            href={link.href}
+            title={variant === 'icons' ? link.label : undefined}
+            {...(external ? { target: '_blank', rel: 'me noopener noreferrer' } : {})}
+          >
+            <Icon name={link.icon} size={15} class="social__icon" />
+            <span class={variant === 'icons' ? 'visually-hidden' : undefined}>{link.label}</span>
+          </a>
+        </li>
+      );
+    })
+  }
+</ul>
+
+<style>
+  .social {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.35rem 1.25rem;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .social a {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    font-size: var(--fs-sm);
+    font-weight: 500;
+    color: var(--text);
+    text-decoration: none;
+    padding-block: 0.2rem;
+    transition: color var(--duration) var(--ease);
+  }
+
+  .social a:hover {
+    color: var(--accent);
+  }
+
+  .social :global(.social__icon) {
+    color: var(--muted);
+    flex: none;
+    transition: color var(--duration) var(--ease);
+  }
+
+  .social a:hover :global(.social__icon) {
+    color: var(--accent);
+  }
+
+  .social--compact {
+    gap: 0.25rem 1rem;
+  }
+
+  .social--compact a {
+    font-size: var(--fs-xs);
+  }
+
+  .social--stacked {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.05rem;
+  }
+
+  .social--stacked a {
+    gap: 0.55rem;
+    padding-block: 0.34rem;
+  }
+
+  .social--icons {
+    gap: 0.4rem;
+  }
+
+  .social--icons a {
+    display: grid;
+    place-items: center;
+    width: 2.15rem;
+    height: 2.15rem;
+    padding: 0;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    color: var(--muted);
+    background-color: var(--bg);
+  }
+
+  .social--icons a:hover {
+    color: var(--accent);
+    border-color: var(--border-strong);
+    background-color: var(--accent-tint);
+  }
+
+  .social--icons :global(.social__icon) {
+    color: inherit;
+  }
+</style>

@@ -1,0 +1,211 @@
+---
+import { navigation, isActive } from '../data/navigation';
+import { profile } from '../data/profile';
+import Icon from './Icon.astro';
+
+const rawPath = Astro.url.pathname;
+const currentPath = rawPath.endsWith('/') ? rawPath : `${rawPath}/`;
+---
+
+<header class="site-header">
+  <div class="container header">
+    <a class="wordmark" href="/">{profile.name}</a>
+
+    <nav class="nav-desktop" aria-label="Primary">
+      <ul role="list">
+        {
+          navigation.map((item) => (
+            <li>
+              <a
+                href={item.href}
+                aria-current={isActive(item.href, currentPath) ? 'page' : undefined}
+              >
+                {item.label}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+
+    <details class="nav-compact">
+      <summary>
+        <span>Menu</span>
+        <Icon name="chevron-down" size={14} class="nav-compact__chevron" />
+      </summary>
+      <nav class="nav-compact__panel" aria-label="Primary">
+        <ul role="list">
+          {
+            navigation.map((item) => (
+              <li>
+                <a
+                  href={item.href}
+                  aria-current={isActive(item.href, currentPath) ? 'page' : undefined}
+                >
+                  {item.label}
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </nav>
+    </details>
+  </div>
+</header>
+
+<style>
+  .site-header {
+    position: relative;
+    z-index: 30;
+    background-color: var(--bg);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem;
+    min-height: 4rem;
+  }
+
+  .wordmark {
+    font-family: var(--font-serif);
+    font-size: 1.0625rem;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    color: var(--text);
+    text-decoration: none;
+    white-space: nowrap;
+  }
+
+  .wordmark:hover {
+    color: var(--accent);
+  }
+
+  .nav-desktop ul {
+    display: flex;
+    align-items: center;
+    gap: clamp(1.1rem, 2.4vw, 1.85rem);
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .nav-desktop a {
+    display: block;
+    padding-block: 0.4rem;
+    font-size: var(--fs-sm);
+    color: var(--muted);
+    text-decoration: none;
+    transition: color var(--duration) var(--ease);
+    position: relative;
+  }
+
+  .nav-desktop a:hover {
+    color: var(--text);
+  }
+
+  .nav-desktop a[aria-current='page'] {
+    color: var(--text);
+    font-weight: 500;
+  }
+
+  .nav-desktop a[aria-current='page']::after {
+    content: '';
+    position: absolute;
+    inset-inline: 0;
+    bottom: 0;
+    height: 1.5px;
+    background-color: var(--accent);
+    border-radius: 1px;
+  }
+
+  /* Compact menu (native disclosure, no client-side JavaScript) ---------- */
+
+  .nav-compact {
+    display: none;
+  }
+
+  .nav-compact summary {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    list-style: none;
+    cursor: pointer;
+    font-size: var(--fs-sm);
+    color: var(--text);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 0.3rem 0.6rem;
+    user-select: none;
+    transition:
+      border-color var(--duration) var(--ease),
+      background-color var(--duration) var(--ease);
+  }
+
+  .nav-compact summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .nav-compact summary:hover {
+    border-color: var(--border-strong);
+    background-color: var(--surface);
+  }
+
+  .nav-compact :global(.nav-compact__chevron) {
+    color: var(--muted);
+    transition: transform var(--duration) var(--ease);
+  }
+
+  .nav-compact[open] :global(.nav-compact__chevron) {
+    transform: rotate(180deg);
+  }
+
+  .nav-compact__panel {
+    position: absolute;
+    inset-inline: 0;
+    top: 100%;
+    background-color: var(--bg);
+    border-bottom: 1px solid var(--border);
+    box-shadow: 0 12px 24px -18px rgb(15 23 42 / 45%);
+    padding: 0.35rem var(--gutter) 0.85rem;
+  }
+
+  .nav-compact__panel ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .nav-compact__panel li + li {
+    border-top: 1px solid var(--border);
+  }
+
+  .nav-compact__panel a {
+    display: block;
+    padding-block: 0.7rem;
+    font-size: var(--fs-base);
+    color: var(--text);
+    text-decoration: none;
+  }
+
+  .nav-compact__panel a[aria-current='page'] {
+    color: var(--accent);
+    font-weight: 500;
+  }
+
+  @media (max-width: 760px) {
+    .nav-desktop {
+      display: none;
+    }
+
+    .nav-compact {
+      display: block;
+    }
+
+    .header {
+      min-height: 3.75rem;
+    }
+  }
+</style>

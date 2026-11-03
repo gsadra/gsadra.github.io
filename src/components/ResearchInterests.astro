@@ -1,0 +1,78 @@
+---
+import { researchAreas, type ResearchArea } from '../data/research';
+
+interface Props {
+  areas?: ResearchArea[];
+  columns?: 1 | 2;
+  /** Row rules. Turn off when the list sits directly under a ruled heading. */
+  ruled?: boolean;
+}
+
+const { areas = researchAreas, columns = 2, ruled = true } = Astro.props;
+---
+
+<ul
+  class:list={['areas', { 'areas--single': columns === 1, 'areas--plain': !ruled }]}
+  role="list"
+>
+  {
+    areas.map((area) => (
+      <li class="area">
+        <h3 class="area__name">{area.name}</h3>
+        <p class="area__desc">{area.description}</p>
+      </li>
+    ))
+  }
+</ul>
+
+<style>
+  .areas {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1.5rem clamp(2rem, 5vw, 3.5rem);
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .areas--single {
+    grid-template-columns: 1fr;
+    max-width: 60ch;
+  }
+
+  .area {
+    border-top: 1px solid var(--border);
+    padding-top: 0.85rem;
+  }
+
+  .areas--plain .area {
+    border-top: 0;
+    padding-top: 0;
+  }
+
+  .areas--plain {
+    gap: 1.35rem clamp(2rem, 5vw, 3.5rem);
+  }
+
+  .area__name {
+    font-family: var(--font-sans);
+    font-size: var(--fs-base);
+    font-weight: 600;
+    line-height: 1.4;
+    letter-spacing: 0;
+  }
+
+  .area__desc {
+    margin-top: 0.35rem;
+    font-size: var(--fs-sm);
+    line-height: 1.6;
+    color: var(--muted);
+  }
+
+  @media (max-width: 640px) {
+    .areas {
+      grid-template-columns: 1fr;
+      gap: 1.15rem;
+    }
+  }
+</style>

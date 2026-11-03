@@ -1,0 +1,223 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import BaseLayout from './BaseLayout.astro';
+import Icon from '../components/Icon.astro';
+import { formatYear, isoDate } from '../utils/dates';
+
+interface Props {
+  project: CollectionEntry<'projects'>;
+}
+
+const { project } = Astro.props;
+const { title, description, status, category, technologies, github, demo, date } =
+  project.data;
+
+const statusClass =
+  status === 'In Progress'
+    ? 'status--in-progress'
+    : status === 'Completed'
+      ? 'status--completed'
+      : '';
+---
+
+<BaseLayout title={`${title} | Sadra Gholami`} description={description}>
+  <article>
+    <header class="project-head">
+      <div class="container--reading">
+        <nav class="breadcrumb" aria-label="Breadcrumb">
+          <a href="/projects/">Projects</a>
+          <span class="breadcrumb__sep" aria-hidden="true">/</span>
+          <span class="breadcrumb__current" aria-current="page">{title}</span>
+        </nav>
+
+        <h1 class="project-head__title">{title}</h1>
+        <p class="lede project-head__desc">{description}</p>
+
+        <div class="project-head__meta">
+          <span class:list={['status', statusClass]}>{status}</span>
+          <span class="meta__dot" aria-hidden="true"></span>
+          <span>{category}</span>
+          <span class="meta__dot" aria-hidden="true"></span>
+          <time datetime={isoDate(date)}>{formatYear(date)}</time>
+        </div>
+
+        {
+          technologies.length > 0 && (
+            <ul class="tag-list project-head__tags" role="list">
+              {technologies.map((tech) => (
+                <li class="tag">{tech}</li>
+              ))}
+            </ul>
+          )
+        }
+
+        <div class="project-head__actions">
+          {
+            github && (
+              <a class="button" href={github} target="_blank" rel="noopener noreferrer">
+                View repository
+                <Icon name="arrow-up-right" size={14} />
+              </a>
+            )
+          }
+          {
+            demo && (
+              <a
+                class="button button--ghost"
+                href={demo}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Live demo
+                <Icon name="arrow-up-right" size={14} />
+              </a>
+            )
+          }
+        </div>
+      </div>
+    </header>
+
+    <div class="container--reading">
+      <div class="prose project-body">
+        <slot />
+      </div>
+
+      <footer class="project-foot">
+        <a href="/projects/">
+          <span aria-hidden="true">←</span>
+          All projects
+        </a>
+      </footer>
+    </div>
+  </article>
+</BaseLayout>
+
+<style>
+  .project-head {
+    padding-block: clamp(2rem, 1.6rem + 2vw, 3rem) clamp(1.75rem, 1.4rem + 1.4vw, 2.5rem);
+  }
+
+  .breadcrumb {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.45rem;
+    font-size: var(--fs-xs);
+    color: var(--muted);
+    margin-bottom: 1.25rem;
+  }
+
+  .breadcrumb a {
+    color: var(--muted);
+    text-decoration: none;
+  }
+
+  .breadcrumb a:hover {
+    color: var(--accent);
+  }
+
+  .breadcrumb__sep {
+    color: var(--border-strong);
+  }
+
+  .breadcrumb__current {
+    color: var(--muted);
+  }
+
+  .project-head__title {
+    max-width: 22ch;
+    font-size: clamp(1.875rem, 1.5rem + 1.6vw, 2.375rem);
+  }
+
+  .project-head__desc {
+    margin-top: 0.9rem;
+    max-width: 60ch;
+    color: var(--muted);
+    font-size: var(--fs-base);
+    line-height: 1.65;
+  }
+
+  .project-head__meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem 0.75rem;
+    margin-top: 1.15rem;
+    font-size: var(--fs-sm);
+    color: var(--muted);
+  }
+
+  .project-head__tags {
+    margin-top: 0.9rem;
+  }
+
+  .project-head__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+    margin-top: 1.5rem;
+  }
+
+  .button {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.5rem 0.9rem;
+    border-radius: var(--radius-sm);
+    background-color: var(--accent);
+    border: 1px solid var(--accent);
+    color: #ffffff;
+    font-size: var(--fs-sm);
+    font-weight: 500;
+    text-decoration: none;
+    transition:
+      background-color var(--duration) var(--ease),
+      border-color var(--duration) var(--ease);
+  }
+
+  .button:hover {
+    background-color: var(--accent-hover);
+    border-color: var(--accent-hover);
+    color: #ffffff;
+  }
+
+  .button--ghost {
+    background-color: transparent;
+    color: var(--text);
+    border-color: var(--border-strong);
+  }
+
+  .button--ghost:hover {
+    background-color: var(--surface);
+    color: var(--text);
+    border-color: var(--muted);
+  }
+
+  .project-body {
+    padding-bottom: 3rem;
+    border-top: 1px solid var(--border);
+    padding-top: 2rem;
+  }
+
+  .project-foot {
+    border-top: 1px solid var(--border);
+    padding-block: 1.5rem 4rem;
+    font-size: var(--fs-sm);
+  }
+
+  .project-foot a {
+    color: var(--muted);
+    text-decoration: none;
+  }
+
+  .project-foot a:hover {
+    color: var(--accent);
+  }
+
+  @media (max-width: 520px) {
+    .breadcrumb__sep,
+    .breadcrumb__current {
+      display: none;
+    }
+  }
+</style>

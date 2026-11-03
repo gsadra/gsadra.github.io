@@ -1,0 +1,73 @@
+---
+import { news, type NewsItem } from '../data/news';
+import { formatMonth, monthDateTime } from '../utils/dates';
+
+interface Props {
+  items?: NewsItem[];
+}
+
+const { items = news } = Astro.props;
+---
+
+<ol class="news" role="list">
+  {
+    items.map((item) => (
+      <li class="news__item">
+        <time class="news__date" datetime={monthDateTime(item.date)}>
+          {formatMonth(item.date)}
+        </time>
+        <p class="news__text">
+          {item.href ? <a href={item.href}>{item.text}</a> : item.text}
+        </p>
+      </li>
+    ))
+  }
+</ol>
+
+<style>
+  .news {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    gap: 0.6rem;
+  }
+
+  .news__item {
+    display: grid;
+    grid-template-columns: 5.5rem 1fr;
+    gap: 1rem;
+    align-items: baseline;
+  }
+
+  .news__date {
+    font-size: var(--fs-xs);
+    color: var(--muted);
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+
+  .news__text {
+    font-size: var(--fs-sm);
+    line-height: 1.6;
+    color: var(--text);
+  }
+
+  .news__text a {
+    color: inherit;
+    text-decoration-color: var(--border-strong);
+    text-underline-offset: 0.2em;
+  }
+
+  .news__text a:hover {
+    color: var(--accent);
+    text-decoration-color: currentColor;
+  }
+
+  @media (max-width: 480px) {
+    .news__item {
+      grid-template-columns: 1fr;
+      gap: 0.1rem;
+    }
+  }
+</style>

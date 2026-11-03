@@ -1,0 +1,119 @@
+---
+import { getCollection } from 'astro:content';
+import PageLayout from '../../../layouts/PageLayout.astro';
+import { collectTags, sortPosts } from '../../../data/blog';
+
+const posts = sortPosts(await getCollection('blog'));
+const tags = collectTags(posts);
+
+const description = 'Browse writing by topic: machine learning, operations research, and more.';
+---
+
+<PageLayout
+  title="Tags | Sadra Gholami"
+  description={description}
+  kicker="Blog"
+  heading="Tags"
+  lede={
+    tags.length > 0
+      ? `${posts.length} ${posts.length === 1 ? 'post' : 'posts'} across ${tags.length} ${tags.length === 1 ? 'topic' : 'topics'}.`
+      : 'Topics will appear here as posts are published.'
+  }
+>
+  {
+    tags.length > 0 ? (
+      <ul class="tag-cloud" role="list">
+        {tags.map((tag) => (
+          <li>
+            <a class="tag-chip" href={`/blog/tags/${tag.slug}/`}>
+              <span>{tag.tag}</span>
+              <span class="tag-chip__count">
+                {tag.count}
+                <span class="visually-hidden">
+                  {tag.count === 1 ? 'post' : 'posts'}
+                </span>
+              </span>
+            </a>
+          </li>
+        ))}
+      </ul>
+    ) : (
+      <p class="empty">No tags yet.</p>
+    )
+  }
+
+  <p class="back-link">
+    <a href="/blog/">
+      <span aria-hidden="true">←</span>
+      All writing
+    </a>
+  </p>
+</PageLayout>
+
+<style>
+  .tag-cloud {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    padding-bottom: 2rem;
+  }
+
+  .tag-chip {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 0.45rem;
+    padding: 0.35rem 0.65rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    background-color: var(--surface);
+    color: var(--text);
+    font-size: var(--fs-sm);
+    text-decoration: none;
+    transition:
+      border-color var(--duration) var(--ease),
+      color var(--duration) var(--ease);
+  }
+
+  .tag-chip:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  .tag-chip__count {
+    font-family: var(--font-mono);
+    font-size: var(--fs-2xs);
+    color: var(--muted);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .tag-chip:hover .tag-chip__count {
+    color: var(--accent);
+  }
+
+  .empty {
+    padding-bottom: 2rem;
+    font-size: var(--fs-sm);
+    color: var(--muted);
+  }
+
+  .back-link {
+    border-top: 1px solid var(--border);
+    padding-block: 1.25rem 4rem;
+    font-size: var(--fs-sm);
+  }
+
+  .back-link a {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    color: var(--muted);
+    text-decoration: none;
+  }
+
+  .back-link a:hover {
+    color: var(--accent);
+  }
+</style>

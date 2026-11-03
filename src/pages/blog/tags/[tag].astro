@@ -1,0 +1,72 @@
+---
+import type { GetStaticPaths } from 'astro';
+import { getCollection, type CollectionEntry } from 'astro:content';
+import PageLayout from '../../../layouts/PageLayout.astro';
+import BlogPostList from '../../../components/BlogPostList.astro';
+import {
+  collectTags,
+  postsWithTag,
+  sortPosts,
+  type TagSummary,
+} from '../../../data/blog';
+
+export const getStaticPaths = (async () => {
+  const posts = sortPosts(await getCollection('blog'));
+
+  return collectTags(posts).map((tag) => ({
+    params: { tag: tag.slug },
+    props: { tag, posts: postsWithTag(posts, tag.slug) },
+  }));
+}) satisfies GetStaticPaths;
+
+interface Props {
+  tag: TagSummary;
+  posts: CollectionEntry<'blog'>[];
+}
+
+const { tag, posts } = Astro.props;
+
+const description = `Posts tagged ${tag.tag} by Sadra Gholami: notes on machine learning, operations research, and related work.`;
+---
+
+<PageLayout
+  title={`${tag.tag} | Blog | Sadra Gholami`}
+  description={description}
+  kicker="Blog · Tag"
+  heading={tag.tag}
+  lede={`${posts.length} ${posts.length === 1 ? 'post' : 'posts'} tagged “${tag.tag}”.`}
+>
+  <BlogPostList posts={posts} />
+
+  <nav class="tag-foot" aria-label="Blog navigation">
+    <a href="/blog/tags/">
+      <span aria-hidden="true">←</span>
+      All tags
+    </a>
+    <a href="/blog/">All writing</a>
+  </nav>
+</PageLayout>
+
+<style>
+  .tag-foot {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 0.75rem 1.5rem;
+    border-top: 1px solid var(--border);
+    padding-block: 1.25rem 4rem;
+    font-size: var(--fs-sm);
+  }
+
+  .tag-foot a {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    color: var(--muted);
+    text-decoration: none;
+  }
+
+  .tag-foot a:hover {
+    color: var(--accent);
+  }
+</style>

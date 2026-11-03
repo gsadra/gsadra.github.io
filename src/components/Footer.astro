@@ -1,0 +1,54 @@
+---
+import SocialLinks from './SocialLinks.astro';
+import { footerLinks, profile, siteMeta } from '../data/profile';
+
+const year = new Date().getFullYear();
+---
+
+<footer class="site-footer">
+  <div class="container footer">
+    <div class="footer__identity">
+      <p class="footer__name">© {year} {profile.name}</p>
+      <p class="footer__note">Content last updated {siteMeta.lastUpdated}.</p>
+    </div>
+
+    <SocialLinks links={footerLinks} variant="icons" class="footer__links" />
+  </div>
+</footer>
+
+<style>
+  .site-footer {
+    border-top: 1px solid var(--border);
+    background-color: var(--surface);
+    margin-top: auto;
+    padding-block: 2rem 2.25rem;
+  }
+
+  .footer {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.25rem 2.5rem;
+  }
+
+  .footer__name {
+    font-size: var(--fs-sm);
+    font-weight: 500;
+    color: var(--text);
+  }
+
+  .footer__note {
+    margin-top: 0.3rem;
+    font-size: var(--fs-xs);
+    line-height: 1.6;
+    color: var(--muted);
+  }
+
+  @media (max-width: 560px) {
+    .footer {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+  }
+</style>
