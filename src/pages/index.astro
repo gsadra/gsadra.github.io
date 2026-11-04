@@ -7,8 +7,7 @@ import ResearchInterests from '../components/ResearchInterests.astro';
 import ProjectCard from '../components/ProjectCard.astro';
 import NewsList from '../components/NewsList.astro';
 import Icon from '../components/Icon.astro';
-import { profile, sameAsProfiles, siteMeta } from '../data/profile';
-import { researchAreas } from '../data/research';
+import { profile, siteMeta } from '../data/profile';
 
 const projects = await getCollection('projects');
 const selected = projects
@@ -18,20 +17,13 @@ const selected = projects
 
 const calendarHref =
   profile.calendarUrl || 'https://calendar.google.com/calendar/u/0/r';
-
-const jsonLd = {
-  '@context': 'https://schema.org',
-  '@type': 'Person',
-  name: profile.name,
-  url: 'https://gsadra.github.io/',
-  jobTitle: profile.title,
-  description: siteMeta.description,
-  knowsAbout: researchAreas.map((area) => area.name),
-  sameAs: sameAsProfiles,
-};
 ---
 
-<BaseLayout title={siteMeta.title} description={siteMeta.description} jsonLd={jsonLd}>
+<BaseLayout
+  title={siteMeta.title}
+  description={siteMeta.description}
+  aboutPerson
+>
   <div class="container home">
     <Profile />
 

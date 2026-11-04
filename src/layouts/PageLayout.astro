@@ -8,7 +8,9 @@ interface Props {
   kicker?: string;
   lede?: string;
   width?: 'default' | 'reading';
-  jsonLd?: Record<string, unknown>;
+  /** Set when the page itself is about the site owner (home, about). */
+  aboutPerson?: boolean;
+  jsonLd?: Record<string, unknown> | Record<string, unknown>[];
 }
 
 const {
@@ -18,13 +20,19 @@ const {
   kicker,
   lede,
   width = 'reading',
+  aboutPerson = false,
   jsonLd,
 } = Astro.props;
 
 const containerClass = width === 'default' ? 'container' : 'container--reading';
 ---
 
-<BaseLayout title={title} description={description} jsonLd={jsonLd}>
+<BaseLayout
+  title={title}
+  description={description}
+  aboutPerson={aboutPerson}
+  jsonLd={jsonLd}
+>
   <header class="page-header">
     <div class={containerClass}>
       {kicker && <p class="eyebrow page-header__kicker">{kicker}</p>}

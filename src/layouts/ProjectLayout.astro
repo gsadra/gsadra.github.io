@@ -3,6 +3,13 @@ import type { CollectionEntry } from 'astro:content';
 import BaseLayout from './BaseLayout.astro';
 import Icon from '../components/Icon.astro';
 import { formatYear, isoDate } from '../utils/dates';
+import {
+  absoluteUrl,
+  breadcrumbListNode,
+  pageUrl,
+  projectNode,
+  siteRoot,
+} from '../utils/seo';
 
 interface Props {
   project: CollectionEntry<'projects'>;
@@ -12,6 +19,28 @@ const { project } = Astro.props;
 const { title, description, status, category, technologies, github, demo, date } =
   project.data;
 
+const site = Astro.site ?? new URL(Astro.url.origin);
+const root = siteRoot(site);
+const canonical = pageUrl(Astro.url.pathname, site);
+
+const jsonLd = [
+  projectNode({
+    root,
+    url: canonical,
+    name: title,
+    description,
+    year: formatYear(date),
+    status,
+    technologies: [...technologies],
+    repository: github,
+  }),
+  // Matches the breadcrumb shown above the project title.
+  breadcrumbListNode(canonical, [
+    { name: 'Projects', url: absoluteUrl('/projects/', site) },
+    { name: title, url: canonical },
+  ]),
+];
+
 const statusClass =
   status === 'In Progress'
     ? 'status--in-progress'
@@ -20,7 +49,11 @@ const statusClass =
       : '';
 ---
 
-<BaseLayout title={`${title} | Sadra Gholami`} description={description}>
+<BaseLayout
+  title={`${title} | Sadra Gholami`}
+  description={description}
+  jsonLd={jsonLd}
+>
   <article>
     <header class="project-head">
       <div class="container--reading">

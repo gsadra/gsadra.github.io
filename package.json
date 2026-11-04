@@ -12,6 +12,7 @@
     "build": "astro build",
     "preview": "astro preview",
     "check": "astro check",
+    "seo:audit": "node scripts/seo-audit.mjs",
     "astro": "astro"
   },
   "dependencies": {

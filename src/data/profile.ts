@@ -40,7 +40,7 @@ export const profile = {
   calendarUrl: "https://calendar.google.com/calendar/embed?height=600&wkst=7&ctz=Asia%2FTehran&showPrint=0&showNav=0&showTabs=0&showCalendars=0&mode=WEEK&title=Sadra%20Gholami's%20Calendar&src=c2FkcmEuZ2hvbGFtaTIwMDNAZ21haWwuY29t&src=ODdiNzQzNDUzZGY3NjBkZWNlMzIzNjJjOGEwOTVlZjZlZGNhZWE1NzQ2MGMzYTA3MDVlZTk1NWRmYzdlNjBiZUBncm91cC5jYWxlbmRhci5nb29nbGUuY29t&color=%231b263b&color=%23ca6702",
 
   /** Portrait path relative to /public. */
-  photo: '/images/profile.jpg',
+  photo: '/images/profile.webp',
   photoAlt: 'Portrait of Sadra Gholami',
 
   social: {

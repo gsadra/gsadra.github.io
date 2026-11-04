@@ -133,7 +133,7 @@ working directory.
 │   ├── files/sadra-gholami-cv.pdf
 │   ├── fonts/                     Self-hosted Inter and Source Serif 4
 │   ├── images/
-│   │   ├── profile.jpg            Homepage portrait
+│   │   ├── profile.webp           Homepage portrait
 │   │   ├── profile.svg            Old monogram placeholder (unused)
 │   │   └── og-card.png            1200 × 630 social preview image
 │   ├── favicon.svg
@@ -271,12 +271,12 @@ under the welcome heading. `src/pages/index.astro` currently reads `bio[0]` and
 ### 5.2 Portrait
 
 The portrait is a normal file in `public/images/`, currently
-`public/images/profile.jpg`.
+`public/images/profile.webp` (WebP, ~189 KB).
 
 1. Put the new image in `public/images/` (for example
-   `public/images/profile.jpg`).
+   `public/images/profile.webp`).
 2. Set `photo` to the root-relative path, for example
-   `'/images/profile.jpg'`.
+   `'/images/profile.webp'`.
 3. Update `photoAlt` to a short description of the image.
 
 The sidebar renders it in a **13:16** frame with `object-fit: cover` and

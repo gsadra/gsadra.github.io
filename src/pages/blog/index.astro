@@ -3,11 +3,20 @@ import { getCollection } from 'astro:content';
 import PageLayout from '../../layouts/PageLayout.astro';
 import BlogPostList from '../../components/BlogPostList.astro';
 import { sortPosts } from '../../data/blog';
+import { blogNode, pageUrl, siteRoot } from '../../utils/seo';
 
 const posts = sortPosts(await getCollection('blog'));
 
 const description =
   'Notes and ideas by Sadra Gholami on machine learning, operations research, and building things with data.';
+
+const site = Astro.site ?? new URL(Astro.url.origin);
+const jsonLd = blogNode({
+  root: siteRoot(site),
+  url: pageUrl(Astro.url.pathname, site),
+  name: 'Blog',
+  description,
+});
 ---
 
 <PageLayout
@@ -15,6 +24,7 @@ const description =
   description={description}
   heading="Blog"
   lede="Working notes on machine learning, operations research, and the parts of a project that usually go unrecorded."
+  jsonLd={jsonLd}
 >
   {
     posts.length > 0 ? (

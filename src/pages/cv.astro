@@ -5,11 +5,22 @@ import { join } from 'node:path';
 import PageLayout from '../layouts/PageLayout.astro';
 import Icon from '../components/Icon.astro';
 import { siteMeta } from '../data/profile';
+import { curriculumVitaeNode, pageUrl, siteRoot } from '../utils/seo';
 
 const cvFile = 'public/files/sadra-gholami-cv.pdf';
+const cvPath = '/files/sadra-gholami-cv.pdf';
 const hasPdf = existsSync(join(process.cwd(), cvFile));
 
 const description = 'Download the curriculum vitae of Sadra Gholami as a PDF.';
+
+const site = Astro.site ?? new URL(Astro.url.origin);
+const jsonLd = hasPdf
+  ? curriculumVitaeNode({
+      root: siteRoot(site),
+      url: pageUrl(Astro.url.pathname, site),
+      path: cvPath,
+    })
+  : undefined;
 ---
 
 <PageLayout
@@ -17,6 +28,7 @@ const description = 'Download the curriculum vitae of Sadra Gholami as a PDF.';
   description={description}
   heading="Curriculum Vitae"
   lede={`The complete document, available as a PDF. Last updated ${siteMeta.lastUpdated}.`}
+  jsonLd={jsonLd}
 >
   <div class="cv-download">
     {

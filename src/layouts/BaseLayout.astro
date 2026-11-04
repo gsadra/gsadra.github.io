@@ -6,19 +6,88 @@ import '../styles/global.css';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import { profile, siteMeta } from '../data/profile';
+import {
+  OG_IMAGE_HEIGHT,
+  OG_IMAGE_PATH,
+  OG_IMAGE_WIDTH,
+  absoluteUrl,
+  pageUrl,
+  personNode,
+  siteRoot,
+  structuredData,
+  twitterHandle,
+  webPageNode,
+  webSiteNode,
+  type JsonLdNode,
+} from '../utils/seo';
 
 interface Props {
   title: string;
   description: string;
   noindex?: boolean;
-  jsonLd?: Record<string, unknown>;
+  /** Set when the page itself is about the site owner (home, about). */
+  aboutPerson?: boolean;
+  /** Extra schema nodes appended to this page's JSON-LD graph. */
+  jsonLd?: JsonLdNode | JsonLdNode[];
+  /** Open Graph object type; blog posts use `article`. */
+  ogType?: 'website' | 'article';
+  article?: {
+    /** ISO date (YYYY-MM-DD) of publication. */
+    publishedTime?: string;
+    tags?: string[];
+  };
 }
 
-const { title, description, noindex = false, jsonLd } = Astro.props;
+const {
+  title,
+  description,
+  noindex = false,
+  aboutPerson = false,
+  jsonLd,
+  ogType = 'website',
+  article,
+} = Astro.props;
 
-const origin = Astro.site ?? Astro.url.origin;
-const canonical = new URL(Astro.url.pathname, origin).href;
-const ogImage = new URL('/images/og-card.png', origin).href;
+const site = Astro.site ?? new URL(Astro.url.origin);
+const root = siteRoot(site);
+const canonical = pageUrl(Astro.url.pathname, site);
+const ogImage = absoluteUrl(OG_IMAGE_PATH, site);
+const ogImageAlt = `${profile.name} — ${profile.title}`;
+const twitterCreator = profile.social.x
+  ? twitterHandle(profile.social.x)
+  : undefined;
+
+const robots = noindex
+  ? 'noindex, follow'
+  : 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1';
+
+const extraNodes: JsonLdNode[] = jsonLd
+  ? Array.isArray(jsonLd)
+    ? jsonLd
+    : [jsonLd]
+  : [];
+
+// One `@graph` per page keeps the Person, WebSite and WebPage entities linked
+// instead of repeating them as disconnected objects. Noindex pages carry no
+// structured data.
+const jsonLdDocument = noindex
+  ? undefined
+  : structuredData([
+      personNode(root),
+      webSiteNode(root),
+      webPageNode({
+        root,
+        url: canonical,
+        name: title,
+        description,
+        aboutPerson,
+      }),
+      ...extraNodes,
+    ]);
+
+const jsonLdHtml = jsonLdDocument
+  ? JSON.stringify(jsonLdDocument).replace(/</g, '\\u003c')
+  : undefined;
 ---
 
 <!doctype html>
@@ -29,9 +98,9 @@ const ogImage = new URL('/images/og-card.png', origin).href;
 
     <title>{title}</title>
     <meta name="description" content={description} />
-    <link rel="canonical" href={canonical} />
     <meta name="author" content={profile.name} />
-    {noindex && <meta name="robots" content="noindex" />}
+    {!noindex && <link rel="canonical" href={canonical} />}
+    <meta name="robots" content={robots} />
 
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="sitemap" href="/sitemap-index.xml" />
@@ -39,7 +108,7 @@ const ogImage = new URL('/images/og-card.png', origin).href;
       rel="alternate"
       type="application/rss+xml"
       title={`${profile.name} — Blog`}
-      href={new URL('/blog/rss.xml', origin).href}
+      href={new URL('/blog/rss.xml', site).href}
     />
     <meta name="theme-color" content="#ffffff" />
 
@@ -58,29 +127,35 @@ const ogImage = new URL('/images/og-card.png', origin).href;
       crossorigin
     />
 
-    <meta property="og:type" content="website" />
+    <meta property="og:type" content={ogType} />
     <meta property="og:site_name" content={profile.name} />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
-    <meta property="og:url" content={canonical} />
+    {!noindex && <meta property="og:url" content={canonical} />}
     <meta property="og:locale" content="en_US" />
     <meta property="og:image" content={ogImage} />
     <meta property="og:image:type" content="image/png" />
-    <meta property="og:image:width" content="1200" />
-    <meta property="og:image:height" content="630" />
-    <meta
-      property="og:image:alt"
-      content={`${profile.name} — ${profile.title}`}
-    />
+    <meta property="og:image:width" content={String(OG_IMAGE_WIDTH)} />
+    <meta property="og:image:height" content={String(OG_IMAGE_HEIGHT)} />
+    <meta property="og:image:alt" content={ogImageAlt} />
+    {
+      article?.publishedTime && (
+        <meta property="article:published_time" content={article.publishedTime} />
+      )
+    }
+    {ogType === 'article' && <meta property="article:author" content={root} />}
+    {article?.tags?.map((tag) => <meta property="article:tag" content={tag} />)}
 
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
+    {twitterCreator && <meta name="twitter:creator" content={twitterCreator} />}
     <meta name="twitter:image" content={ogImage} />
+    <meta name="twitter:image:alt" content={ogImageAlt} />
 
     <meta name="generator" content={Astro.generator} />
 
-    {jsonLd && <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />}
+    {jsonLdHtml && <script type="application/ld+json" set:html={jsonLdHtml} />}
   </head>
 
   <body id="top">
