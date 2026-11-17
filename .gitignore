@@ -25,6 +25,8 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
+.astro-dev.log
+.astro-dev.pid
 
 # Local browser QA profile
 .chrome-qa/

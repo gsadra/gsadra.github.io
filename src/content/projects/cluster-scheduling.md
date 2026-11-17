@@ -7,7 +7,7 @@ technologies:
   - Machine Learning
   - Scheduling
   - Simulation
-featured: true
+featured: false
 status: "In Progress"
 date: 2026-11-01
 ---

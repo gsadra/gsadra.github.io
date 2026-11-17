@@ -10,13 +10,13 @@ export interface NewsItem {
  */
 export const news: NewsItem[] = [
   {
+    date: '2026-11',
+    text: 'Working on Feasibility Study of Tire size 195R14 Production in Iran',
+    href: '/projects/',
+  },
+  {
     date: '2026-10',
     text: 'Research on machine learning approaches to cluster workload scheduling is in progress.',
     href: '/research/',
-  },
-  {
-    date: '2026-9',
-    text: 'Source code for Predict-Ur-Score and MDFH-SCP is available on GitHub.',
-    href: '/projects/',
   },
 ];
