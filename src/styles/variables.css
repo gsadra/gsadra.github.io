@@ -17,6 +17,7 @@
   --accent: #2563eb;
   --accent-hover: #1d4ed8;
   --accent-tint: #eff5ff;
+  --accent-contrast: #ffffff;
 
   /* Type families */
   --font-sans: 'Inter', ui-sans-serif, system-ui, -apple-system, 'Segoe UI',
@@ -59,4 +60,27 @@
   /* Motion */
   --ease: cubic-bezier(0.2, 0.6, 0.2, 1);
   --duration: 140ms;
+}
+
+/*
+ * Dark theme
+ * A dark blue palette, applied through `data-theme="dark"` on <html>. The
+ * inline script in BaseLayout sets that attribute before the first paint.
+ */
+
+:root[data-theme='dark'] {
+  color-scheme: dark;
+
+  --bg: #0d1117;
+  --surface: #141c26;
+  --text: #e6edf3;
+  --muted: #9198a1;
+  --border: #26303c;
+  --border-strong: #3d444d;
+  --accent: #4493f8;
+  --accent-hover: #6cb0fa;
+  --accent-tint: rgb(68 147 248 / 22%);
+  --accent-contrast: #0b1220;
+
+  --shadow-sm: 0 1px 2px rgb(0 0 0 / 45%);
 }

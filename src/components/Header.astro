@@ -2,6 +2,7 @@
 import { navigation, isActive } from '../data/navigation';
 import { profile } from '../data/profile';
 import Icon from './Icon.astro';
+import ThemeToggle from './ThemeToggle.astro';
 
 const rawPath = Astro.url.pathname;
 const currentPath = rawPath.endsWith('/') ? rawPath : `${rawPath}/`;
@@ -27,6 +28,8 @@ const currentPath = rawPath.endsWith('/') ? rawPath : `${rawPath}/`;
         }
       </ul>
     </nav>
+
+    <ThemeToggle />
 
     <details class="nav-compact">
       <summary>
@@ -64,12 +67,13 @@ const currentPath = rawPath.endsWith('/') ? rawPath : `${rawPath}/`;
   .header {
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    justify-content: flex-start;
     gap: 1.5rem;
     min-height: 4rem;
   }
 
   .wordmark {
+    margin-inline-end: auto;
     font-family: var(--font-serif);
     font-size: 1.0625rem;
     font-weight: 600;

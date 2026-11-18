@@ -96,6 +96,26 @@ const jsonLdHtml = jsonLdDocument
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
 
+    {/* Resolve the theme before first paint so the page never flashes the
+        wrong palette: saved choice first, then the OS preference. */}
+    <script is:inline>
+      (() => {
+        let stored = null;
+        try {
+          stored = localStorage.getItem('theme');
+        } catch {
+          stored = null;
+        }
+        const theme =
+          stored === 'light' || stored === 'dark'
+            ? stored
+            : window.matchMedia('(prefers-color-scheme: dark)').matches
+              ? 'dark'
+              : 'light';
+        document.documentElement.setAttribute('data-theme', theme);
+      })();
+    </script>
+
     <title>{title}</title>
     <meta name="description" content={description} />
     <meta name="author" content={profile.name} />
