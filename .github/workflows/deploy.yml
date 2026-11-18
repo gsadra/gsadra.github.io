@@ -31,6 +31,12 @@ jobs:
         #   node-version: 24
         #   package-manager: npm@latest
 
+      # Audits the dist/ the action just built (including the social cards its
+      # postbuild step generated). A failure fails this job, so `deploy` — which
+      # needs it — never runs and the site is not published.
+      - name: Audit the built site
+        run: npm run seo:audit
+
   deploy:
     needs: build
     runs-on: ubuntu-latest
