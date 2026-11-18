@@ -10,6 +10,7 @@ import {
   breadcrumbListNode,
   pageUrl,
   siteRoot,
+  socialCardPath,
 } from '../../utils/seo';
 
 export const getStaticPaths = (async () => {
@@ -38,6 +39,7 @@ const jsonLd = [
     description,
     datePublished: published,
     tags: [...tags],
+    image: socialCardPath(Astro.url.pathname),
   }),
   // Matches the breadcrumb shown above the post title.
   breadcrumbListNode(canonical, [

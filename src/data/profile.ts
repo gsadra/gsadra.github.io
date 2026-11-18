@@ -110,6 +110,4 @@ export const siteMeta = {
   description:
     'Personal academic website of Sadra Gholami, featuring research interests, machine learning projects, operations research, and academic work.',
   lang: 'en',
-  /** Update when the site content or CV changes materially. */
-  lastUpdated: 'November 2026',
 } as const;

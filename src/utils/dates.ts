@@ -16,6 +16,17 @@ export function monthDateTime(isoMonth: string): string {
   return /^\d{4}-\d{2}$/.test(isoMonth) ? `${isoMonth}-01` : isoMonth;
 }
 
+const monthYearFormatter = new Intl.DateTimeFormat('en-US', {
+  month: 'long',
+  year: 'numeric',
+  timeZone: 'UTC',
+});
+
+/** 2026-11-01 → "November 2026" */
+export function formatMonthYear(date: Date): string {
+  return monthYearFormatter.format(date);
+}
+
 /** A project date is displayed at year precision in listings. */
 export function formatYear(date: Date): string {
   return String(date.getUTCFullYear());

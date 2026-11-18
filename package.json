@@ -10,6 +10,7 @@
   "scripts": {
     "dev": "astro dev",
     "build": "astro build",
+    "postbuild": "node scripts/og-cards.mjs",
     "preview": "astro preview",
     "check": "astro check",
     "seo:audit": "node scripts/seo-audit.mjs",

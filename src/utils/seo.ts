@@ -14,9 +14,21 @@ import { researchAreas } from '../data/research';
 
 export type JsonLdNode = Record<string, unknown>;
 
-export const OG_IMAGE_PATH = '/images/og-card.png';
 export const OG_IMAGE_WIDTH = 1200;
 export const OG_IMAGE_HEIGHT = 630;
+
+/**
+ * Social preview card for a page pathname: `/` → `/og/home.png`,
+ * `/blog/tags/writing/` → `/og/blog-tags-writing.png`. `scripts/og-cards.mjs`
+ * writes exactly these files after a build.
+ */
+export function socialCardPath(pathname: string): string {
+  const slug = pathname
+    .replace(/\.html?$/, '')
+    .replace(/^\/+|\/+$/g, '')
+    .replace(/\/+/g, '-');
+  return `/og/${slug || 'home'}.png`;
+}
 
 /** Absolute URL for a site-relative path. */
 export function absoluteUrl(path: string, site: URL | string): string {
@@ -83,6 +95,8 @@ export interface WebPageInput {
   url: string;
   name: string;
   description: string;
+  /** Site-relative social card for this page. */
+  image: string;
   /** Set when the page itself is about the site owner (home, about). */
   aboutPerson?: boolean;
 }
@@ -93,6 +107,7 @@ export function webPageNode({
   url,
   name,
   description,
+  image,
   aboutPerson = false,
 }: WebPageInput): JsonLdNode {
   return {
@@ -105,7 +120,7 @@ export function webPageNode({
     inLanguage: siteMeta.lang,
     primaryImageOfPage: {
       '@type': 'ImageObject',
-      url: absoluteUrl(OG_IMAGE_PATH, root),
+      url: absoluteUrl(image, root),
       width: OG_IMAGE_WIDTH,
       height: OG_IMAGE_HEIGHT,
     },
@@ -148,6 +163,8 @@ export interface BlogPostingInput {
   /** ISO date (YYYY-MM-DD). */
   datePublished: string;
   tags: string[];
+  /** Site-relative social card for this post. */
+  image: string;
 }
 
 /** A blog post, matching the article metadata emitted in the document head. */
@@ -158,6 +175,7 @@ export function blogPostingNode({
   description,
   datePublished,
   tags,
+  image,
 }: BlogPostingInput): JsonLdNode {
   return {
     '@type': 'BlogPosting',
@@ -171,7 +189,7 @@ export function blogPostingNode({
     isPartOf: { '@id': `${root}#website` },
     author: { '@id': `${root}#person` },
     publisher: { '@id': `${root}#person` },
-    image: absoluteUrl(OG_IMAGE_PATH, root),
+    image: absoluteUrl(image, root),
     ...(tags.length > 0 ? { keywords: tags.join(', ') } : {}),
   };
 }

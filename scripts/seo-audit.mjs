@@ -73,7 +73,14 @@ if (!existsSync(DIST)) {
   process.exit(1);
 }
 
-const htmlFiles = walk(DIST).filter((file) => file.endsWith('.html'));
+// Only route output is a page. Static-host verification files copied from
+// public/ (e.g. the Google Search Console token page) are plain HTML too and
+// are not audited.
+const PAGE_FILE = /(?:^|\/)(?:index|404)\.html$/;
+
+const htmlFiles = walk(DIST).filter((file) =>
+  PAGE_FILE.test(file.split(sep).join('/')),
+);
 const pages = htmlFiles.map((file) => {
   const html = readFileSync(file, 'utf8');
   return { file, path: pagePath(file), html };

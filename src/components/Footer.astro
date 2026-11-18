@@ -1,15 +1,18 @@
 ---
 import SocialLinks from './SocialLinks.astro';
-import { footerLinks, profile, siteMeta } from '../data/profile';
+import { footerLinks, profile } from '../data/profile';
+import { latestContentDate } from '../utils/content';
+import { formatMonthYear } from '../utils/dates';
 
 const year = new Date().getFullYear();
+const lastUpdated = formatMonthYear(await latestContentDate());
 ---
 
 <footer class="site-footer">
   <div class="container footer">
     <div class="footer__identity">
       <p class="footer__name">© {year} {profile.name}</p>
-      <p class="footer__note">Content last updated {siteMeta.lastUpdated}.</p>
+      <p class="footer__note">Content last updated {lastUpdated}.</p>
     </div>
 
     <SocialLinks links={footerLinks} variant="icons" class="footer__links" />

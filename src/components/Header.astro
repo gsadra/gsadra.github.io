@@ -141,7 +141,7 @@ const currentPath = rawPath.endsWith('/') ? rawPath : `${rawPath}/`;
     color: var(--text);
     border: 1px solid var(--border);
     border-radius: var(--radius-sm);
-    padding: 0.3rem 0.6rem;
+    padding: 0.4rem 0.7rem;
     user-select: none;
     transition:
       border-color var(--duration) var(--ease),
@@ -213,3 +213,26 @@ const currentPath = rawPath.endsWith('/') ? rawPath : `${rawPath}/`;
     }
   }
 </style>
+
+<script>
+  // The compact menu is a native <details>: it already opens and closes from
+  // the summary, so this only adds the two dismissals it lacks — a press
+  // outside it, and Escape (which also returns focus to the trigger).
+  const menu = document.querySelector<HTMLDetailsElement>('.nav-compact');
+  const trigger = menu?.querySelector('summary');
+
+  if (menu && trigger) {
+    document.addEventListener('pointerdown', (event) => {
+      const target = event.target;
+      if (menu.open && target instanceof Node && !menu.contains(target)) {
+        menu.open = false;
+      }
+    });
+
+    menu.addEventListener('keydown', (event) => {
+      if (event.key !== 'Escape' || !menu.open) return;
+      menu.open = false;
+      trigger.focus();
+    });
+  }
+</script>

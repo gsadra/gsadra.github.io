@@ -8,12 +8,12 @@ import Footer from '../components/Footer.astro';
 import { profile, siteMeta } from '../data/profile';
 import {
   OG_IMAGE_HEIGHT,
-  OG_IMAGE_PATH,
   OG_IMAGE_WIDTH,
   absoluteUrl,
   pageUrl,
   personNode,
   siteRoot,
+  socialCardPath,
   structuredData,
   twitterHandle,
   webPageNode,
@@ -51,7 +51,8 @@ const {
 const site = Astro.site ?? new URL(Astro.url.origin);
 const root = siteRoot(site);
 const canonical = pageUrl(Astro.url.pathname, site);
-const ogImage = absoluteUrl(OG_IMAGE_PATH, site);
+const cardPath = socialCardPath(Astro.url.pathname);
+const ogImage = absoluteUrl(cardPath, site);
 const ogImageAlt = `${profile.name} — ${profile.title}`;
 const twitterCreator = profile.social.x
   ? twitterHandle(profile.social.x)
@@ -80,6 +81,7 @@ const jsonLdDocument = noindex
         url: canonical,
         name: title,
         description,
+        image: cardPath,
         aboutPerson,
       }),
       ...extraNodes,

@@ -9,7 +9,7 @@ Every built page (except the 404) gets:
 - a unique `<title>` and meta description, plus `meta name="author"`;
 - an absolute self-referencing `<link rel="canonical">` using the trailing-slash URL;
 - `<meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">`;
-- Open Graph and Twitter/X card tags, including the 1200×630 `images/og-card.png`;
+- Open Graph and Twitter/X card tags, including a per-page 1200×630 card at `/og/<page>.png`;
 - `article:*` tags on blog posts;
 - one JSON-LD `@graph` containing `Person`, `WebSite` and `WebPage` nodes with stable `@id`s;
 - `<html lang="en">`.
@@ -29,6 +29,29 @@ Page-specific JSON-LD:
 All structured data is generated from `src/data/profile.ts`, `src/data/research.ts`
 and the content collections. `sameAs` uses only the social profiles configured in
 `profile.social`. Nothing is invented.
+
+## Social preview cards
+
+Every page gets its own 1200×630 PNG under `dist/og/`, written by
+`scripts/og-cards.mjs` (the `postbuild` script, so `npm run build` produces
+them and the GitHub Actions deploy publishes them).
+
+- Path convention comes from `socialCardPath()` in `src/utils/seo.ts`:
+  `/` → `/og/home.png`, `/about/` → `/og/about.png`,
+  `/blog/tags/writing/` → `/og/blog-tags-writing.png`.
+- Cards are rendered from the built HTML: each one shows that page's own
+  `og:title` and `og:description`, so a card cannot drift from its page. The
+  section eyebrow is derived from the page path.
+- The JSON-LD `WebPage.primaryImageOfPage` and `BlogPosting.image` nodes use the
+  same per-page card instead of one site-wide image.
+- Rasterising uses `sharp`, which is already installed for Astro's image
+  service, so no dependency was added. The SVG renderer ignores embedded web
+  fonts and draws with the host's serif/sans faces, so glyph widths vary a
+  little between build machines while the layout does not.
+- `npm run seo:audit` fails if any page's `og:image` file is missing from
+  `dist/`.
+- `astro dev` does not generate cards; they exist after `npm run build`, and
+  `npm run preview` serves them.
 
 ## Generated crawl files
 
@@ -154,7 +177,8 @@ Technical crawlability is done; ranking is decided by the search engines.
 
 ## Performance notes
 
-- The site ships **no client-side JavaScript**; navigation uses native `<details>`.
+- The site ships two small scripts (theme toggle/persistence and the compact-menu
+  dismissal) — no framework runtime; navigation itself uses native `<details>`.
 - Self-hosted WOFF2 fonts are preloaded and use `font-display: swap`.
 - The portrait has explicit dimensions and `fetchpriority="high"`, and the LCP
   element is a text paragraph, so layout shift is 0 in local lab runs.
